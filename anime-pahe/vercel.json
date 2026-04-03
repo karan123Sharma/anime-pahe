@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
+  "buildCommand": "npx ng build --configuration production",
   "installCommand": "npm ci",
   "outputDirectory": "dist/anime-pahe/browser",
   "rewrites": [
