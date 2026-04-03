@@ -1,0 +1,179 @@
+@if (loading()) {
+  <div class="loading">
+    <div class="banner-skeleton skeleton"></div>
+    <div class="container">
+      <div class="detail-skeleton">
+        <div class="ds-title skeleton"></div>
+        <div class="ds-meta skeleton"></div>
+        <div class="ds-desc skeleton"></div>
+      </div>
+    </div>
+  </div>
+} @else {
+  @if (anime(); as a) {
+    <!-- Banner -->
+    <section class="banner" [style.backgroundImage]="'url(' + (a.bannerUrl || a.posterUrl) + ')'">
+      <div class="banner-overlay"></div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="detail-layout container">
+      <div class="detail-main">
+        <!-- Poster + Core Info -->
+        <div class="detail-top">
+          <div class="poster-wrap">
+            @if (a.posterUrl) {
+              <img [src]="a.posterUrl" [alt]="a.title" class="poster-img" />
+            } @else {
+              <div class="poster-placeholder"></div>
+            }
+          </div>
+
+          <div class="core-info">
+            <div class="type-row">
+              @if (a.type) { <span class="badge badge-type">{{ a.type }}</span> }
+              <span [class]="'badge ' + statusClass">{{ a.status }}</span>
+              @if (a.score) {
+                <span class="badge badge-score">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  {{ a.score.toFixed(1) }}
+                </span>
+              }
+            </div>
+
+            <h1 class="anime-title">{{ a.title }}</h1>
+            @if (a.titleJapanese) {
+              <p class="japanese-title">{{ a.titleJapanese }}</p>
+            }
+
+            @if (a.genres.length) {
+              <div class="genre-row">
+                @for (g of a.genres; track g.id) {
+                  <span class="genre-tag">{{ g.name }}</span>
+                }
+              </div>
+            }
+
+            <div class="action-row">
+              @if (episodes().length) {
+                <a [routerLink]="['/watch', a.id, 1]" class="btn-play">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  Watch Now
+                </a>
+              }
+              <button class="btn-wl" [class.active]="watchlist.isInWatchlist(a.id)" (click)="toggleWatchlist()">
+                <svg width="18" height="18" viewBox="0 0 24 24" [attr.fill]="watchlist.isInWatchlist(a.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                </svg>
+                {{ watchlist.isInWatchlist(a.id) ? 'In Watchlist' : 'Add to Watchlist' }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button [class.active]="activeTab() === 'overview'" (click)="setTab('overview')">Overview</button>
+          <button [class.active]="activeTab() === 'episodes'" (click)="setTab('episodes')">Episodes</button>
+          <button [class.active]="activeTab() === 'reviews'" (click)="setTab('reviews')">Reviews</button>
+          <button [class.active]="activeTab() === 'related'" (click)="setTab('related')">Related</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+          @switch (activeTab()) {
+            @case ('overview') {
+              <div class="overview-tab">
+                <h3>Synopsis</h3>
+                <p class="synopsis">{{ a.synopsis || 'No synopsis available.' }}</p>
+              </div>
+            }
+            @case ('episodes') {
+              <div class="episodes-tab">
+                @if (episodes().length) {
+                  <div class="episode-grid">
+                    @for (ep of episodes(); track ep.id) {
+                      <a [routerLink]="['/watch', a.id, ep.episodeNumber]" class="episode-card">
+                        <div class="ep-thumb">
+                          @if (ep.thumbnailUrl) {
+                            <img [src]="ep.thumbnailUrl" [alt]="ep.title" loading="lazy" />
+                          }
+                          <span class="ep-num">EP {{ ep.episodeNumber }}</span>
+                          <div class="ep-play-overlay">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                          </div>
+                        </div>
+                        <div class="ep-info">
+                          <p class="ep-title">{{ ep.title || 'Episode ' + ep.episodeNumber }}</p>
+                          @if (ep.duration) { <span class="ep-dur">{{ ep.duration }}</span> }
+                        </div>
+                      </a>
+                    }
+                  </div>
+                } @else {
+                  <p class="empty-msg">No episodes available yet.</p>
+                }
+              </div>
+            }
+            @case ('reviews') {
+              <div class="reviews-tab">
+                <p class="empty-msg">Reviews coming soon.</p>
+              </div>
+            }
+            @case ('related') {
+              <div class="related-tab">
+                @if (related().length) {
+                  <div class="related-grid">
+                    @for (r of related(); track r.id) {
+                      <app-anime-card [anime]="r" />
+                    }
+                  </div>
+                } @else {
+                  <p class="empty-msg">No related anime found.</p>
+                }
+              </div>
+            }
+          }
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="detail-sidebar">
+        <div class="info-card">
+          <h4>Information</h4>
+          <dl>
+            @if (a.type) { <dt>Type</dt><dd>{{ a.type }}</dd> }
+            @if (a.episodeCount) { <dt>Episodes</dt><dd>{{ a.episodeCount }}</dd> }
+            @if (a.status) { <dt>Status</dt><dd>{{ a.status }}</dd> }
+            @if (a.airedFrom) { <dt>Aired</dt><dd>{{ formatDate(a.airedFrom) }}{{ a.airedTo ? ' — ' + formatDate(a.airedTo) : '' }}</dd> }
+            @if (a.season) { <dt>Season</dt><dd class="capitalize">{{ a.season }} {{ a.seasonYear }}</dd> }
+            @if (a.score) { <dt>Score</dt><dd>{{ a.score.toFixed(2) }}</dd> }
+          </dl>
+        </div>
+
+        @if (a.genres.length) {
+          <div class="info-card">
+            <h4>Genres</h4>
+            <div class="sidebar-genres">
+              @for (g of a.genres; track g.id) {
+                <a [routerLink]="['/browse']" [queryParams]="{genre: g.slug}" class="sg-chip">{{ g.name }}</a>
+              }
+            </div>
+          </div>
+        }
+      </aside>
+    </div>
+
+    <!-- Related Carousel (bottom) -->
+    @if (related().length && activeTab() !== 'related') {
+      <section class="related-section container">
+        <h3 class="related-heading">You Might Also Like</h3>
+        <div class="related-scroll">
+          @for (r of related(); track r.id) {
+            <app-anime-card [anime]="r" class="related-card" />
+          }
+        </div>
+      </section>
+    }
+  }
+}

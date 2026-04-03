@@ -1,0 +1,153 @@
+<div class="profile-page">
+  <div class="container">
+    <!-- Profile Header -->
+    <section class="profile-header">
+      <div class="avatar-section">
+        <div class="avatar-ring">
+          <div class="avatar">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
+            </svg>
+          </div>
+        </div>
+        <div class="user-info">
+          <h1>Anime Fan</h1>
+          <p class="username">&#64;animefan</p>
+          <p class="member-since">Member since 2024</p>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-value">{{ stats().totalWatched }}</span>
+          <span class="stat-label">Episodes Watched</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">{{ stats().watchlistCount }}</span>
+          <span class="stat-label">In Watchlist</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">{{ stats().hoursWatched }}h</span>
+          <span class="stat-label">Hours Watched</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value">{{ stats().avgScore }}</span>
+          <span class="stat-label">Avg Score</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Continue Watching -->
+    @if (continueWatching().length) {
+      <section class="section">
+        <h2 class="section-title">
+          <span class="accent-dot"></span>
+          Continue Watching
+        </h2>
+        <div class="cw-scroll">
+          @for (item of continueWatching(); track item.animeId) {
+            <a [routerLink]="['/watch', item.animeId, item.episodeNumber]" class="cw-card">
+              <div class="cw-poster">
+                @if (item.animePosterUrl) {
+                  <img [src]="item.animePosterUrl" [alt]="item.animeTitle" loading="lazy" />
+                }
+                <div class="cw-progress">
+                  <div class="cw-bar" [style.width.%]="item.progress"></div>
+                </div>
+              </div>
+              <p class="cw-name">{{ item.animeTitle }}</p>
+              <p class="cw-ep">EP {{ item.episodeNumber }} · {{ item.progress }}%</p>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Watchlist -->
+    <section class="section">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="accent-dot"></span>
+          My Watchlist
+        </h2>
+        <a routerLink="/watchlist" class="see-all">
+          View All
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      </div>
+      @if (watchlistAnime().length) {
+        <div class="watchlist-grid">
+          @for (anime of watchlistAnime().slice(0, 8); track anime.id) {
+            <app-anime-card [anime]="anime" />
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+            <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+          </svg>
+          <p>Your watchlist is empty</p>
+          <a routerLink="/browse" class="browse-link">Browse Anime</a>
+        </div>
+      }
+    </section>
+
+    <!-- Watch History -->
+    @if (watchHistory().length) {
+      <section class="section">
+        <h2 class="section-title">
+          <span class="accent-dot"></span>
+          Watch History
+        </h2>
+        <div class="history-list">
+          @for (item of watchHistory().slice(0, 10); track item.animeId + '-' + item.episodeNumber) {
+            <a [routerLink]="['/watch', item.animeId, item.episodeNumber]" class="history-item">
+              <div class="history-poster">
+                @if (item.animePosterUrl) {
+                  <img [src]="item.animePosterUrl" [alt]="item.animeTitle" loading="lazy" />
+                }
+              </div>
+              <div class="history-info">
+                <p class="history-title">{{ item.animeTitle }}</p>
+                <p class="history-ep">Episode {{ item.episodeNumber }}</p>
+              </div>
+              <span class="history-progress">{{ item.progress }}%</span>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Favorite Genres -->
+    @if (favoriteGenres().length) {
+      <section class="section">
+        <h2 class="section-title">
+          <span class="accent-dot"></span>
+          Favorite Genres
+        </h2>
+        <div class="genre-chips">
+          @for (genre of favoriteGenres(); track genre) {
+            <span class="genre-chip">{{ genre }}</span>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Achievement Badges -->
+    <section class="section section-last">
+      <h2 class="section-title">
+        <span class="accent-dot"></span>
+        Achievements
+      </h2>
+      <div class="badges-grid">
+        @for (badge of badges; track badge.label; let i = $index) {
+          <div class="badge-card" [class.unlocked]="i < 2">
+            <span class="badge-icon">{{ badge.icon }}</span>
+            <span class="badge-label">{{ badge.label }}</span>
+            <span class="badge-desc">{{ badge.desc }}</span>
+          </div>
+        }
+      </div>
+    </section>
+  </div>
+</div>

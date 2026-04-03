@@ -1,0 +1,628 @@
+/* Inset “card” hero — matches reference (not edge-to-edge full bleed) */
+:host {
+  display: block;
+  width: 100%;
+  padding: 0 var(--gutter);
+  box-sizing: border-box;
+}
+
+.hero {
+  --hero-h: min(72vh, 640px);
+  position: relative;
+  width: 100%;
+  max-width: var(--max-width);
+  margin: calc(var(--header-height) + 22px) auto 36px;
+  min-height: var(--hero-h);
+  height: var(--hero-h);
+  overflow: hidden;
+  background: linear-gradient(160deg, #0c0630 0%, #08051f 35%, #0a0828 70%, #050214 100%);
+  border-radius: 24px;
+  border: 1px solid rgba(129, 140, 248, 0.22);
+  box-shadow:
+    0 32px 80px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(56, 189, 248, 0.12),
+    0 0 60px rgba(99, 102, 241, 0.18),
+    0 0 100px rgba(34, 211, 238, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Vibrant atmospheric base (purple / cyan / blue bokeh) ─── */
+.hero-ambient {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 110% 90% at 50% -5%, rgba(139, 92, 246, 0.55) 0%, rgba(99, 102, 241, 0.15) 42%, transparent 58%),
+    radial-gradient(ellipse 85% 70% at 100% 25%, rgba(34, 211, 238, 0.35) 0%, rgba(14, 165, 233, 0.08) 45%, transparent 58%),
+    radial-gradient(ellipse 75% 60% at 0% 55%, rgba(168, 85, 247, 0.4) 0%, rgba(124, 58, 237, 0.12) 48%, transparent 62%),
+    radial-gradient(ellipse 70% 55% at 85% 85%, rgba(59, 130, 246, 0.32) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 45% at 30% 90%, rgba(236, 72, 153, 0.12) 0%, transparent 50%),
+    linear-gradient(155deg, #14082e 0%, #0c0635 28%, #080c2a 55%, #06041c 100%);
+}
+
+.hero-ambient::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.72;
+  mix-blend-mode: screen;
+  background-image:
+    radial-gradient(2px 2px at 10% 15%, rgba(255, 255, 255, 0.7) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 24% 38%, rgba(196, 181, 253, 0.85) 50%, transparent 50%),
+    radial-gradient(1px 1px at 52% 18%, rgba(165, 243, 252, 0.75) 50%, transparent 50%),
+    radial-gradient(2px 2px at 82% 32%, rgba(255, 255, 255, 0.65) 50%, transparent 50%),
+    radial-gradient(1px 1px at 94% 10%, rgba(125, 211, 252, 0.8) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 44% 62%, rgba(253, 224, 200, 0.45) 50%, transparent 50%),
+    radial-gradient(2px 2px at 68% 72%, rgba(255, 255, 255, 0.55) 50%, transparent 50%),
+    radial-gradient(1px 1px at 16% 78%, rgba(167, 139, 250, 0.7) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 90% 58%, rgba(34, 211, 238, 0.65) 50%, transparent 50%),
+    radial-gradient(2px 2px at 36% 26%, rgba(255, 255, 255, 0.35) 50%, transparent 50%),
+    radial-gradient(1px 1px at 58% 48%, rgba(192, 132, 252, 0.5) 50%, transparent 50%),
+    radial-gradient(1.5px 1.5px at 72% 12%, rgba(103, 232, 249, 0.55) 50%, transparent 50%);
+}
+
+/* ─── Backdrop layer ─── */
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-backdrop-blur {
+  position: absolute;
+  inset: -8%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center 28%;
+  /* Let poster colors read through — more saturation / less crush */
+  filter: blur(48px) brightness(0.48) saturate(1.75) contrast(1.05);
+  transform: scale(1.08);
+  opacity: 0.88;
+}
+
+.hero-backdrop-tint {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 95% 75% at 72% 42%, rgba(99, 102, 241, 0.38) 0%, rgba(139, 92, 246, 0.12) 45%, transparent 58%),
+    radial-gradient(ellipse 70% 55% at 18% 55%, rgba(34, 211, 238, 0.22) 0%, transparent 52%),
+    radial-gradient(ellipse 55% 50% at 50% 100%, rgba(59, 130, 246, 0.2) 0%, transparent 50%),
+    linear-gradient(
+      100deg,
+      rgba(12, 8, 32, 0.82) 0%,
+      rgba(10, 10, 40, 0.38) 38%,
+      rgba(8, 12, 36, 0.22) 55%,
+      rgba(6, 8, 28, 0.45) 100%
+    );
+}
+
+/* Sharp cinematic banner (library / has bannerUrl) */
+.hero-img--banner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+  display: block;
+  transform: translateZ(0);
+}
+
+/* ─── Readability stack over imagery ─── */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    linear-gradient(to top, var(--bg-primary) 0%, transparent 32%),
+    linear-gradient(to right, rgba(8, 6, 24, 0.88) 0%, rgba(20, 12, 48, 0.15) 46%, transparent 68%);
+}
+
+/* Poster mode: keep right side alive with color — tint vignette instead of flat grey */
+.hero--poster-mode .hero-vignette {
+  background:
+    linear-gradient(to top, rgba(8, 8, 18, 0.95) 0%, transparent 22%),
+    linear-gradient(
+      to right,
+      rgba(10, 8, 28, 0.92) 0%,
+      rgba(30, 20, 70, 0.22) 32%,
+      rgba(99, 102, 241, 0.06) 48%,
+      transparent 58%
+    ),
+    linear-gradient(
+      to left,
+      rgba(15, 10, 40, 0.35) 0%,
+      rgba(34, 211, 238, 0.04) 28%,
+      transparent 42%
+    );
+}
+
+/* ─── Stage: card + focal poster share one grid ─── */
+.hero-stage {
+  position: relative;
+  z-index: 3;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  padding: 28px clamp(16px, 4vw, 40px) 88px;
+  pointer-events: none;
+}
+
+.hero-stage > * {
+  pointer-events: auto;
+}
+
+.hero-content {
+  width: 100%;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: grid;
+  align-items: center;
+  justify-content: start;
+  column-gap: clamp(8px, 3vw, 40px);
+  grid-template-columns: minmax(0, min(480px, 100%));
+}
+
+/* Poster: glass card + focal art — extra air between card and poster (your mocks) */
+.hero-content--split {
+  grid-template-columns: minmax(240px, min(400px, 88vw)) minmax(180px, 1fr);
+  column-gap: clamp(28px, 5.5vw, 64px);
+  align-items: center;
+}
+
+.hero-glass-card {
+  position: relative;
+  z-index: 4;
+  width: 100%;
+  max-width: min(420px, 100%);
+  padding: clamp(18px, 3.2vw, 26px);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(20px) saturate(1.35);
+  -webkit-backdrop-filter: blur(20px) saturate(1.35);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  margin-right: 0;
+  animation: heroCardIn 580ms var(--ease-out);
+}
+
+@keyframes heroCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-focal {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  margin-bottom: 0;
+  /* Same recipe as your mock: perspective + rotateY (left edge nearer, right recedes) */
+  perspective: 1000px;
+  perspective-origin: 50% 52%;
+}
+
+/* 3D “case” poster: rotateY + light rotateX; blue neon rim + soft pool under (JoJo / AoT refs) */
+.hero-poster-frame {
+  position: relative;
+  padding: 2px;
+  border-radius: 8px;
+  background: linear-gradient(
+    145deg,
+    rgba(224, 242, 254, 0.5) 0%,
+    rgba(56, 189, 248, 0.5) 38%,
+    rgba(14, 165, 233, 0.45) 65%,
+    rgba(99, 102, 241, 0.35) 100%
+  );
+  box-shadow:
+    0 0 0 1px rgba(125, 211, 252, 0.4) inset,
+    0 0 24px rgba(0, 168, 255, 0.55),
+    0 0 48px rgba(14, 165, 233, 0.45),
+    0 0 88px rgba(56, 189, 248, 0.3),
+    0 36px 72px rgba(0, 0, 0, 0.55),
+    0 48px 80px -20px rgba(186, 230, 253, 0.12);
+  transform: rotateY(-13deg) rotateX(4deg);
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  transition: transform 500ms var(--ease-out), box-shadow var(--transition-normal);
+  animation: heroPosterIn 680ms var(--ease-out) 40ms both;
+}
+
+/* Left-edge sheen = reads like a thick box face (Steel Ball Run style) */
+.hero-poster-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0.22) 0%, transparent 14%);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: soft-light;
+}
+
+/* Soft glow on the “floor” under the poster */
+.hero-poster-frame::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -14%;
+  width: 72%;
+  height: 22%;
+  transform: translateX(-50%) translateZ(-40px);
+  background: radial-gradient(ellipse 100% 100% at 50% 0%, rgba(224, 242, 254, 0.22), transparent 68%);
+  filter: blur(18px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.9;
+}
+
+.hero-focal:hover .hero-poster-frame {
+  transform: rotateY(-11deg) rotateX(3deg) translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgba(186, 230, 253, 0.45) inset,
+    0 0 32px rgba(0, 168, 255, 0.65),
+    0 0 64px rgba(14, 165, 233, 0.5),
+    0 0 100px rgba(56, 189, 248, 0.35),
+    0 40px 80px rgba(0, 0, 0, 0.6),
+    0 52px 90px -18px rgba(186, 230, 253, 0.16);
+}
+
+.hero-img--poster {
+  position: relative;
+  z-index: 2;
+  width: auto;
+  max-width: min(380px, 38vw);
+  height: auto;
+  max-height: min(500px, calc(var(--hero-h) - 100px));
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  border-radius: 6px;
+}
+
+@keyframes heroPosterIn {
+  from {
+    opacity: 0;
+    transform: rotateY(-18deg) rotateX(6deg) translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: rotateY(-13deg) rotateX(4deg) translateY(0) scale(1);
+  }
+}
+
+.meta-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin-bottom: 14px;
+}
+
+.tag {
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.tag-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  text-transform: none;
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: #fde047;
+  background: rgba(234, 179, 8, 0.12);
+  border-color: rgba(250, 204, 21, 0.22);
+}
+
+.tag-accent {
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  font-size: 0.72rem;
+  background: rgba(106, 90, 249, 0.2);
+  border-color: rgba(139, 92, 246, 0.35);
+  color: #ddd6fe;
+}
+
+.tag-muted {
+  text-transform: capitalize;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.hero-title {
+  font-size: clamp(1.65rem, 3.8vw, 2.65rem);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.genre-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.genre-chip {
+  padding: 4px 11px;
+  font-size: 0.74rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hero-synopsis {
+  font-size: 0.9rem;
+  line-height: 1.62;
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 22px;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 26px;
+  background: linear-gradient(90deg, #38bdf8 0%, #3b82f6 45%, #6366f1 100%);
+  border-radius: var(--radius-full);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), filter var(--transition-fast);
+  box-shadow:
+    0 4px 20px rgba(14, 165, 233, 0.45),
+    0 8px 32px rgba(59, 130, 246, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.12) inset;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow:
+    0 6px 28px rgba(14, 165, 233, 0.55),
+    0 12px 40px rgba(59, 130, 246, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.14) inset;
+}
+
+.btn-watchlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 22px;
+  border-radius: var(--radius-full);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: none;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+a.btn-watchlist:hover,
+button.btn-watchlist:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.btn-watchlist.in-list {
+  background: rgba(139, 92, 246, 0.2);
+  border-color: rgba(167, 139, 250, 0.45);
+  color: #ede9fe;
+}
+
+.hero-edge-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(6, 6, 14, 0.4);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  pointer-events: auto;
+}
+
+.hero-edge-arrow:hover {
+  background: rgba(99, 102, 241, 0.35);
+  border-color: rgba(129, 140, 248, 0.45);
+}
+
+.hero-edge-prev {
+  left: 14px;
+}
+
+.hero-edge-next {
+  right: 14px;
+}
+
+.hero-dots {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius-full);
+  background: rgba(5, 5, 12, 0.45);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.28);
+  cursor: pointer;
+  transition: width var(--transition-normal), background var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.dot:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.dot.active {
+  width: 30px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+  box-shadow: 0 0 18px rgba(14, 165, 233, 0.65), 0 0 36px rgba(56, 189, 248, 0.35);
+}
+
+@media (max-width: 900px) {
+  .hero {
+    border-radius: 20px;
+    margin-top: calc(var(--header-height) + 14px);
+    margin-bottom: 24px;
+  }
+
+  .hero-content--split {
+    grid-template-columns: 1fr;
+    row-gap: 0;
+    align-items: end;
+  }
+
+  .hero-glass-card {
+    max-width: 100%;
+    margin-right: 0;
+    order: 1;
+  }
+
+  .hero-focal {
+    order: 2;
+    margin-bottom: 16px;
+    max-height: min(42vh, 320px);
+    justify-content: center;
+    perspective: 1000px;
+    perspective-origin: 50% 52%;
+  }
+
+  .hero-poster-frame {
+    transform: rotateY(-9deg) rotateX(3deg);
+    transform-origin: center center;
+    animation: heroPosterInMobile 600ms var(--ease-out) 40ms both;
+  }
+
+  .hero-focal:hover .hero-poster-frame {
+    transform: rotateY(-7deg) rotateX(2deg) translateY(-2px);
+  }
+
+  @keyframes heroPosterInMobile {
+    from {
+      opacity: 0;
+      transform: rotateY(-12deg) rotateX(5deg) translateY(16px) scale(0.97);
+    }
+    to {
+      opacity: 1;
+      transform: rotateY(-9deg) rotateX(3deg) translateY(0) scale(1);
+    }
+  }
+
+  .hero-img--poster {
+    max-width: min(260px, 72vw);
+    max-height: min(42vh, 300px);
+  }
+
+  .hero-stage {
+    padding-bottom: 88px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    --hero-h: min(78vh, 620px);
+  }
+
+  .hero-vignette {
+    background: linear-gradient(to top, var(--bg-primary) 0%, transparent 25%);
+  }
+
+  .hero-edge-arrow {
+    width: 40px;
+    height: 40px;
+    top: auto;
+    bottom: 86px;
+    transform: none;
+  }
+
+  .hero-edge-prev {
+    left: 12px;
+  }
+
+  .hero-edge-next {
+    right: 12px;
+  }
+
+  .hero-dots {
+    bottom: 14px;
+  }
+
+  .hero-synopsis {
+    -webkit-line-clamp: 3;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-primary,
+  .btn-watchlist {
+    justify-content: center;
+  }
+}

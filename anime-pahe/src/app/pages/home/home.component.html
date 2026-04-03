@@ -1,0 +1,158 @@
+@if (loading()) {
+  <div class="loading-state">
+    <div class="hero-skeleton skeleton"></div>
+    <div class="section-skeleton">
+      <div class="sh-title skeleton"></div>
+      <div class="sh-grid">
+        @for (i of [1,2,3,4,5,6]; track i) {
+          <div class="sh-card skeleton"></div>
+        }
+      </div>
+    </div>
+  </div>
+} @else {
+  @if (heroSlides().length) {
+    <app-hero-carousel [slides]="heroSlides()" />
+  }
+
+  <div class="home-sections">
+    <!-- Continue Watching -->
+    @if (continueWatching().length) {
+      <section class="section">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span class="accent-dot"></span>
+              Continue Watching
+            </h2>
+            <p class="section-sub">Pick up where you left off</p>
+          </div>
+        </div>
+        <div class="scroll-shelf">
+          <button type="button" class="shelf-nav shelf-prev" (click)="scrollShelf($event, -1)" aria-label="Scroll left">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div class="scroll-shelf-body">
+            <div class="scroll-row" (scroll)="syncScrollRail($event)">
+          @for (item of continueWatching(); track item.animeId) {
+            <a [routerLink]="['/anime', item.animeSlug]" class="cw-card scroll-card">
+              <div class="cw-poster">
+                <img [src]="item.animePosterUrl" [alt]="item.animeTitle" loading="lazy" />
+                <div class="cw-overlay">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+                <div class="cw-progress">
+                  <div class="cw-bar" [style.width.%]="item.progress"></div>
+                </div>
+              </div>
+              <div class="cw-info">
+                <p class="cw-title">{{ item.animeTitle }}</p>
+                <p class="cw-ep">Episode {{ item.episodeNumber }}</p>
+              </div>
+            </a>
+          }
+            </div>
+            <div class="scroll-rail" aria-hidden="true">
+              <div class="scroll-rail-tilt">
+                <div class="scroll-rail-track">
+                  <div class="scroll-rail-thumb"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="shelf-nav shelf-next" (click)="scrollShelf($event, 1)" aria-label="Scroll right">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </section>
+    }
+
+    <!-- Jikan discover rows (trending_this_season, top_rated, …) -->
+    @for (section of discoverSections(); track section.id) {
+      @if (section.items.length) {
+        <section class="section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">
+                <span class="accent-dot"></span>
+                {{ section.title }}
+              </h2>
+              <p class="section-sub">{{ section.subtitle }}</p>
+            </div>
+            <a routerLink="/browse" class="see-all">
+              Browse
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+          </div>
+
+          @if (isGridSection(section.id)) {
+            <div class="anime-grid">
+              @for (card of section.items; track card.malId; let i = $index) {
+                <app-discover-card [card]="card" [showRank]="true" [rank]="i + 1" />
+              }
+            </div>
+          } @else {
+            <div class="scroll-shelf">
+              <button type="button" class="shelf-nav shelf-prev" (click)="scrollShelf($event, -1)" aria-label="Scroll left">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+              </button>
+              <div class="scroll-shelf-body">
+                <div class="scroll-row" (scroll)="syncScrollRail($event)">
+              @for (card of section.items; track card.malId) {
+                <app-discover-card [card]="card" class="scroll-card discover-scroll-card" />
+              }
+                </div>
+                <div class="scroll-rail" aria-hidden="true">
+                  <div class="scroll-rail-tilt">
+                    <div class="scroll-rail-track">
+                      <div class="scroll-rail-thumb"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="shelf-nav shelf-next" (click)="scrollShelf($event, 1)" aria-label="Scroll right">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </button>
+            </div>
+          }
+        </section>
+      }
+    }
+
+    <!-- Recently Updated (local DB) -->
+    @if (recentlyUpdated().length) {
+      <section class="section section-last">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span class="accent-dot"></span>
+              Recently Updated
+            </h2>
+            <p class="section-sub">Latest episode releases in your library</p>
+          </div>
+        </div>
+        <div class="recent-list">
+          @for (anime of recentlyUpdated(); track anime.id; let i = $index) {
+            <a [routerLink]="['/anime', anime.slug]" class="recent-item">
+              <span class="recent-num">{{ (i + 1).toString().padStart(2, '0') }}</span>
+              <div class="recent-poster">
+                @if (anime.posterUrl) {
+                  <img [src]="anime.posterUrl" [alt]="anime.title" loading="lazy" />
+                }
+              </div>
+              <div class="recent-info">
+                <h4>{{ anime.title }}</h4>
+                <p>
+                  @if (anime.episodeCount) { {{ anime.episodeCount }} eps · }
+                  {{ anime.type || 'TV' }}
+                  @if (anime.score) { · ⭐ {{ anime.score.toFixed(1) }} }
+                </p>
+              </div>
+              <svg class="recent-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  </div>
+}

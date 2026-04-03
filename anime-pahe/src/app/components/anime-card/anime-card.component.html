@@ -1,0 +1,50 @@
+<a [routerLink]="['/anime', anime.slug]" class="card">
+  <div class="poster">
+    @if (anime.posterUrl) {
+      <img [src]="anime.posterUrl" [alt]="anime.title" loading="lazy" />
+    } @else {
+      <div class="poster-placeholder">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+          <rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="2"/><path d="m21 15-5-5L5 21"/>
+        </svg>
+      </div>
+    }
+
+    @if (showRank && rank > 0) {
+      <span class="rank-badge">#{{ rank }}</span>
+    }
+
+    @if (anime.type) {
+      <span class="type-badge">{{ anime.type }}</span>
+    }
+
+    <div class="overlay">
+      <button class="play-btn" title="View Details">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z"/>
+        </svg>
+      </button>
+      <button class="wl-btn" [class.active]="watchlist.isInWatchlist(anime.id)" (click)="toggleWatchlist($event)" title="Toggle Watchlist">
+        <svg width="20" height="20" viewBox="0 0 24 24" [attr.fill]="watchlist.isInWatchlist(anime.id) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+          <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+        </svg>
+      </button>
+    </div>
+
+    @if (anime.score) {
+      <span class="score-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        {{ scoreDisplay }}
+      </span>
+    }
+  </div>
+
+  <div class="info">
+    <h3 class="title">{{ anime.title }}</h3>
+    @if (anime.genres.length) {
+      <p class="genres">{{ genreText }}</p>
+    }
+  </div>
+</a>

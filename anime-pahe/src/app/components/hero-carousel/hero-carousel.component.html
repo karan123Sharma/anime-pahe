@@ -1,0 +1,137 @@
+@if (slides.length) {
+  <section class="hero" [class.hero--poster-mode]="!!slide && usesPosterAsHero(slide)">
+    <div class="hero-ambient" aria-hidden="true"></div>
+    <div class="hero-bg">
+      @if (slide; as s) {
+        @if (usesPosterAsHero(s)) {
+          <div class="hero-backdrop-blur" [style.background-image]="heroBlurBackground(s)" aria-hidden="true"></div>
+          <div class="hero-backdrop-tint" aria-hidden="true"></div>
+        } @else {
+          <img
+            [src]="heroImageUrl(s)"
+            [alt]="s.title"
+            class="hero-img hero-img--banner"
+            [style.object-position]="heroObjectPosition(s)"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            referrerpolicy="no-referrer"
+          />
+        }
+      }
+    </div>
+
+    <div class="hero-vignette" aria-hidden="true"></div>
+
+    <button type="button" class="hero-edge-arrow hero-edge-prev" (click)="prev()" aria-label="Previous slide">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+    </button>
+    <button type="button" class="hero-edge-arrow hero-edge-next" (click)="next()" aria-label="Next slide">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m9 18 6-6-6-6"/>
+      </svg>
+    </button>
+
+    <div class="hero-stage">
+      <div class="hero-content" [class.hero-content--split]="!!slide && usesPosterAsHero(slide)">
+        @if (slide; as s) {
+          <div class="hero-glass-card">
+            <div class="meta-tags">
+              @if (s.type) {
+                <span class="tag">{{ s.type }}</span>
+              }
+              @if (s.score != null) {
+                <span class="tag tag-score">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  {{ s.score.toFixed(1) }}
+                </span>
+              }
+              @if (firstGenreName(s); as gname) {
+                <span class="tag tag-accent">{{ gname }}</span>
+              }
+              @if (!firstGenreName(s) && s.season && s.seasonYear) {
+                <span class="tag tag-muted">{{ s.season }} {{ s.seasonYear }}</span>
+              }
+            </div>
+
+            <h1 class="hero-title">{{ s.title }}</h1>
+
+            @if (s.genres.length > 1) {
+              <div class="genre-list">
+                @for (genre of s.genres.slice(1, 5); track genre.id) {
+                  <span class="genre-chip">{{ genre.name }}</span>
+                }
+              </div>
+            }
+
+            <p class="hero-synopsis">{{ truncate(s.synopsis ?? '', 200) }}</p>
+
+            <div class="hero-actions">
+              @if (s.slug) {
+                <a [routerLink]="['/anime', s.slug]" class="btn-primary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  Watch Now
+                </a>
+                @if (s.libraryId != null) {
+                  <button
+                    type="button"
+                    class="btn-watchlist"
+                    [class.in-list]="watchlist.isInWatchlist(s.libraryId)"
+                    (click)="toggleHeroWatchlist($event, s.libraryId)"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 5v14"/><path d="M5 12h14"/>
+                    </svg>
+                    {{ watchlist.isInWatchlist(s.libraryId) ? 'In watchlist' : '+ Watchlist' }}
+                  </button>
+                }
+              } @else {
+                <a [routerLink]="['/browse']" [queryParams]="{ q: s.title }" class="btn-primary">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                  Watch Now
+                </a>
+                <a routerLink="/watchlist" class="btn-watchlist">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 5v14"/><path d="M5 12h14"/>
+                  </svg>
+                  + Watchlist
+                </a>
+              }
+            </div>
+          </div>
+
+          @if (usesPosterAsHero(s)) {
+            <div class="hero-focal" aria-hidden="true">
+              <div class="hero-poster-frame">
+                <img
+                  [src]="heroImageUrl(s)"
+                  [alt]="s.title"
+                  class="hero-img hero-img--poster"
+                  loading="eager"
+                  fetchpriority="high"
+                  decoding="async"
+                  referrerpolicy="no-referrer"
+                />
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
+
+    <div class="hero-dots" role="tablist" aria-label="Featured slides">
+      @for (item of slides; track item.id; let i = $index) {
+        <button
+          type="button"
+          class="dot"
+          [class.active]="i === current()"
+          (click)="goTo(i)"
+          [attr.aria-label]="'Slide ' + (i + 1)"
+          [attr.aria-selected]="i === current()"
+        ></button>
+      }
+    </div>
+  </section>
+}

@@ -1,0 +1,51 @@
+<a
+  [routerLink]="['/browse']"
+  [queryParams]="{ q: card.title }"
+  class="card"
+  [title]="'Search: ' + card.title"
+>
+  <div class="poster">
+    @if (card.posterUrl) {
+      <img [src]="card.posterUrl" [alt]="card.title" loading="lazy" referrerpolicy="no-referrer" />
+    } @else {
+      <div class="poster-placeholder">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3">
+          <rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8" cy="8" r="2"/><path d="m21 15-5-5L5 21"/>
+        </svg>
+      </div>
+    }
+
+    @if (showRank && rank > 0) {
+      <span class="rank-badge">#{{ rank }}</span>
+    }
+
+    @if (card.type) {
+      <span class="type-badge">{{ card.type }}</span>
+    }
+
+    <div class="overlay">
+      <span class="play-hint">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </span>
+    </div>
+
+    @if (card.score != null) {
+      <span class="score-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+        {{ scoreDisplay }}
+      </span>
+    }
+  </div>
+
+  <div class="info">
+    <h3 class="title">{{ card.title }}</h3>
+    @if (card.year || card.season) {
+      <p class="meta">
+        @if (card.season) { <span class="capitalize">{{ card.season }}</span> }
+        @if (card.year) { {{ card.season ? ' ' : '' }}{{ card.year }} }
+      </p>
+    }
+  </div>
+</a>
