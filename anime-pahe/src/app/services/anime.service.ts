@@ -3,12 +3,12 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Anime, AnimeSearchResponse, Episode, Genre, PageResponse } from '../models/anime.model';
 import { DiscoverSectionsResponse } from '../models/discover.model';
-import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AnimeService {
   private readonly api = environment.apiUrl;
-
+  const API_BASE = 'https://webpage-d3k2.onrender.com/api';
+  private readonly api = API_BASE;
   constructor(private http: HttpClient) {}
 
   getAnimeList(page = 0, size = 20, sort = 'score,desc'): Observable<PageResponse<Anime>> {
